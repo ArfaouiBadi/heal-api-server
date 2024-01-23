@@ -9,8 +9,8 @@ import { Product } from '@prisma/client';
 @Controller('products')
 export class ProductController {
   constructor(private productService: ProductService) {}
-  @Get('all')
-  getProducts(): string {
+  @Get('')
+  getProducts(): Promise<Product[]> {
     return this.productService.getProducts();
   }
   @Post('addProduct')

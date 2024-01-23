@@ -6,9 +6,31 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  getProducts(): string {
-    return 'products';
+  async getProducts(): Promise<Product[]> {
+    return this.prisma.product.findMany();
   }
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      where: {
+        ProductCategory: category,
+      },
+    });
+  }
+  async getProductsByStatus(status: string): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      where: {
+        Status: status,
+      },
+    });
+  }
+  async getProductsByUser(userId: string): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+  }
+
   async addProduct(@Body() req: any): Promise<Product> {
     console.log(req);
     const product = await this.prisma.product.create({
@@ -22,7 +44,11 @@ export class ProductService {
         Status: req.inventoryStatus.value,
         Image: req.Image,
         Reviews: 0,
-        user: {},
+        user: {
+          connect: {
+            id: '65ac63178d7f7bd033f1d6f3',
+          },
+        },
       },
     });
     return product;
