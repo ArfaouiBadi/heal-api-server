@@ -25,9 +25,10 @@ interface CreateProductDto {
 export class ProductController {
   constructor(private productService: ProductService) {}
 
-  @Get()
-  getProducts(): Promise<Product[]> {
-    return this.productService.getProducts();
+  @Get(':id')
+  async getProductsByUser(@Param('id') id: string): Promise<Product[]> {
+    console.log(id);
+    return await this.productService.getProductsByUser(id);
   }
 
   @Post('addProduct')

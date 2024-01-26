@@ -3,14 +3,15 @@ import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 interface CreateProductDto {
-  ProductName: string;
-  Marque: string;
+  productName: string;
+  marque: string;
   price: number;
-  Quantity: number;
-  ExpirationDate: Date;
-  ProductCategory: string;
-  inventoryStatus: { value: string }; // Assuming it's an object with a "value" property
+  quantity: number;
+  expirationDate: Date;
+  productCategory: string;
+  inventoryStatus: { value: string };
   Image: string;
+  userId: string;
 }
 
 interface UpdateProductDto extends CreateProductDto {
@@ -22,13 +23,28 @@ export class ProductService {
   constructor(private prisma: PrismaService) {}
 
   async getProducts(): Promise<Product[]> {
-    return this.prisma.product.findMany();
+    try {
+      const products = await this.prisma.product.findMany({
+        include: {
+          category: true,
+          subcategory: true,
+          user: true,
+        },
+      });
+
+      return products;
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw new Error('Error fetching products');
+    }
   }
 
   async getProductsByCategory(category: string): Promise<Product[]> {
     return this.prisma.product.findMany({
       where: {
-        ProductCategory: category,
+        category: {
+          name: category,
+        },
       },
     });
   }
@@ -36,35 +52,53 @@ export class ProductService {
   async getProductsByStatus(status: string): Promise<Product[]> {
     return this.prisma.product.findMany({
       where: {
-        Status: status,
+        status: status,
       },
     });
   }
 
   async getProductsByUser(userId: string): Promise<Product[]> {
+    console.log(userId);
     return this.prisma.product.findMany({
+      include: {
+        category: true,
+        subcategory: true,
+        user: true,
+      },
       where: {
         userId: userId,
       },
     });
   }
 
-  async addProduct(req: CreateProductDto): Promise<Product> {
+  async addProduct(req: any): Promise<Product> {
+    console.log('hello');
+    console.log(req);
     try {
       const product = await this.prisma.product.create({
         data: {
-          ProductName: req.ProductName,
-          Marque: req.Marque,
-          Price: req.price,
-          Quantity: req.Quantity,
-          ExpirationDate: req.ExpirationDate,
-          ProductCategory: req.ProductCategory,
-          Status: req.inventoryStatus.value,
-          Image: req.Image,
-          Reviews: 0,
+          productName: req.productName,
+          marque: req.marque,
+          price: req.price,
+          quantity: req.quantity,
+          expirationDate: req.expirationDate,
+          category: {
+            connect: {
+              id: req.category.value.split(' ')[0],
+            },
+          },
+          prescription: false,
+          status: req.inventoryStatus.value,
+          image: req.Image,
+          reviews: 0,
+          subcategory: {
+            connect: {
+              id: req.category.value.split(' ')[1],
+            },
+          },
           user: {
             connect: {
-              id: '65ac63178d7f7bd033f1d6f3',
+              id: req.userId,
             },
           },
         },
@@ -83,14 +117,30 @@ export class ProductService {
           id: req.id,
         },
         data: {
-          ProductName: req.ProductName,
-          Marque: req.Marque,
-          Price: req.price,
-          Quantity: req.Quantity,
-          ExpirationDate: req.ExpirationDate,
-          ProductCategory: req.ProductCategory,
-          Status: req.inventoryStatus.value,
-          Image: req.Image,
+          productName: req.productName,
+          marque: req.marque,
+          price: req.price,
+          quantity: req.quantity,
+          expirationDate: req.expirationDate,
+          category: {
+            connect: {
+              id: req.productCategory.split(' ')[0],
+            },
+          },
+          prescription: false,
+          status: req.inventoryStatus.value,
+          image: req.Image,
+          reviews: 0,
+          subcategory: {
+            connect: {
+              id: req.productCategory.split(' ')[1],
+            },
+          },
+          user: {
+            connect: {
+              id: req.userId,
+            },
+          },
         },
       });
       return updatedProduct;

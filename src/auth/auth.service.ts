@@ -70,7 +70,7 @@ export class AuthService {
   async signToken(
     userId: string,
     email: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; userId: string }> {
     const payload = {
       sub: userId,
       email,
@@ -78,12 +78,13 @@ export class AuthService {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '30d',
       secret: secret,
     });
 
     return {
       access_token: token,
+      userId: userId,
     };
   }
 }

@@ -18,23 +18,43 @@ model User {
   products  Product[]
 }
 
+model Category {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String        @unique
+  subcategories Subcategory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Product       Product[]
+}
+
+model Subcategory {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String    @unique
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId String    @db.ObjectId
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Product    Product[]
+}
+
 model Product {
-  id                String    @id @default(auto()) @map("_id") @db.ObjectId
-  ProductCategory   String    @unique
-  Subcategories     String[]
-  Subsubcategories  String[]
-  ProductName       String
-  Price             Float
-  Image             String?
-  Reviews           Float?
-  Status            String?
-  Quantity          Int
-  Marque            String
-  ExpirationDate    DateTime?
-  Prescription      Boolean?
-  UsageInstructions String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  userId            String    @db.ObjectId
-  user              User      @relation(fields: [userId], references: [id])
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  productName       String
+  price             Float
+  image             String?
+  reviews           Float?
+  status            String?
+  quantity          Int
+  marque            String
+  expirationDate    DateTime?
+  prescription      Boolean?
+  usageInstructions String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  userId            String      @db.ObjectId
+  user              User        @relation(fields: [userId], references: [id])
+  categoryId        String      @db.ObjectId
+  subcategoryId     String      @db.ObjectId
+  category          Category    @relation(fields: [categoryId], references: [id])
+  subcategory       Subcategory @relation(fields: [subcategoryId], references: [id])
 }
