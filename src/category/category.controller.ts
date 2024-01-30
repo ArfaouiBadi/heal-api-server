@@ -17,4 +17,8 @@ export class CategoryController {
   async addCategory(@Body() req): Promise<Category> {
     return await this.categoryService.addCategory(req);
   }
+  @Get('names')
+  async getCategoryNames(): Promise<any> {
+    return await this.categoryService.getCategoryNames();
+  }
 }

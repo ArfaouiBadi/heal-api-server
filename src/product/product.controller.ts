@@ -30,6 +30,10 @@ export class ProductController {
     console.log(id);
     return await this.productService.getProductsByUser(id);
   }
+  @Get()
+  async getAllProducts(): Promise<Product[]> {
+    return await this.productService.getAllProducts();
+  }
 
   @Post('addProduct')
   async addProduct(@Body() req: CreateProductDto): Promise<Product> {

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-
+/*
 interface CreateProductDto {
   productName: string;
   marque: string;
@@ -14,10 +14,21 @@ interface CreateProductDto {
   userId: string;
 }
 
-interface UpdateProductDto extends CreateProductDto {
+interface UpdateProductDto {
   id: string;
+  productName: string;
+  marque: string;
+  price: number;
+  quantity: number;
+  expirationDate: Date;
+  productCategory: string;
+  inventoryStatus: { value: string };
+  Image: string;
+  userId: string;
+  prescription: boolean;
+  usageInstructions: string;
 }
-
+*/
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
@@ -72,7 +83,6 @@ export class ProductService {
   }
 
   async addProduct(req: any): Promise<Product> {
-    console.log('hello');
     console.log(req);
     try {
       const product = await this.prisma.product.create({
@@ -84,12 +94,13 @@ export class ProductService {
           expirationDate: req.expirationDate,
           category: {
             connect: {
-              id: req.category.value.split(' ')[0],
+              id: req.category?.value.split(' ')[0],
             },
           },
-          prescription: false,
-          status: req.inventoryStatus.value,
-          image: req.Image,
+          usageInstructions: req.usageInstructions,
+          prescription: req.prescription,
+          status: req.inventoryStatus?.value,
+          image: req.image,
           reviews: 0,
           subcategory: {
             connect: {
@@ -110,7 +121,8 @@ export class ProductService {
     }
   }
 
-  async updateProduct(req: UpdateProductDto): Promise<Product> {
+  async updateProduct(req: any): Promise<Product> {
+    console.log(req);
     try {
       const updatedProduct = await this.prisma.product.update({
         where: {
@@ -124,16 +136,17 @@ export class ProductService {
           expirationDate: req.expirationDate,
           category: {
             connect: {
-              id: req.productCategory.split(' ')[0],
+              id: req.categoryId,
             },
           },
-          prescription: false,
-          status: req.inventoryStatus.value,
-          image: req.Image,
+          usageInstructions: req.usageInstructions,
+          prescription: req.prescription,
+          status: req.status,
+          image: req.image,
           reviews: 0,
           subcategory: {
             connect: {
-              id: req.productCategory.split(' ')[1],
+              id: req.subcategoryId,
             },
           },
           user: {
@@ -164,7 +177,13 @@ export class ProductService {
     }
   }
 
-  getProduct(): string {
-    return 'get product';
+  getAllProducts(): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      include: {
+        category: true,
+        subcategory: true,
+        user: true,
+      },
+    });
   }
 }

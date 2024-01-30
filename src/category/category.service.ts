@@ -32,4 +32,11 @@ export class CategoryService {
     });
     return category;
   }
+  async getCategoryNames(): Promise<any> {
+    return await this.prisma.category.findMany({
+      select: {
+        name: true,
+      },
+    });
+  }
 }
