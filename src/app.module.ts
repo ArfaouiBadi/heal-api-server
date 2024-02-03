@@ -1,3 +1,4 @@
+import { CommandPlanModule } from './commandPlan/commandplan.module';
 import { PaymentModule } from './payment/payment.module';
 import { BrandModule } from './brand/brand.module';
 import { SubCategoryModule } from './subCategory/subcategory.module';
@@ -10,6 +11,7 @@ import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
+        CommandPlanModule, 
     PaymentModule,
     BrandModule,
     SubCategoryModule,

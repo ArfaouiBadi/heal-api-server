@@ -19,6 +19,9 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   products            Product[]
+
+  CommandProduct CommandProduct[]
+  CommandPlan    CommandPlan[]
 }
 
 model Category {
@@ -41,7 +44,7 @@ model Subcategory {
 }
 
 model Product {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
   productName       String
   price             Float
   image             String?
@@ -52,14 +55,51 @@ model Product {
   expirationDate    DateTime?
   prescription      Boolean?
   usageInstructions String?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  userId            String      @db.ObjectId
-  user              User        @relation(fields: [userId], references: [id])
-  categoryId        String      @db.ObjectId
-  subcategoryId     String      @db.ObjectId
-  category          Category    @relation(fields: [categoryId], references: [id])
-  subcategory       Subcategory @relation(fields: [subcategoryId], references: [id])
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  userId            String           @db.ObjectId
+  user              User             @relation(fields: [userId], references: [id])
+  categoryId        String           @db.ObjectId
+  subcategoryId     String           @db.ObjectId
+  category          Category         @relation(fields: [categoryId], references: [id])
+  subcategory       Subcategory      @relation(fields: [subcategoryId], references: [id])
+  CommandProduct    CommandProduct[]
+}
+
+model CommandProduct {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  quantity  Int      @default(1)
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  planId    String   @db.ObjectId
+  plan      Plan     @relation(fields: [planId], references: [id])
+}
+
+model CommandPlan {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  quantity  Int      @default(1)
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  planId    String   @db.ObjectId
+  plan      Plan     @relation(fields: [planId], references: [id])
+}
+
+model Plan {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String           @unique
+  price          Float
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  CommandProduct CommandProduct[]
+  CommandPlan    CommandPlan[]
 }
 
 model Brand {

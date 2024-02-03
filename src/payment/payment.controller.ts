@@ -7,15 +7,27 @@ import { PaymentRequestBody } from 'src/types/types';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Post('/check')
-  async createCheckoutSession(
+  @Post('/check/product')
+  async createCheckoutSessionProduct(
     @Body() requestBody: PaymentRequestBody,
     @Res() res: Response,
   ) {
     try {
-      console.log(requestBody);
       const session =
-        await this.paymentService.createCheckoutSession(requestBody);
+        await this.paymentService.createCheckoutSessionProduct(requestBody);
+      res.status(HttpStatus.OK).json({ url: session.url });
+    } catch (err) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ err: err.message });
+    }
+  }
+  @Post('/check/plan')
+  async createCheckoutSessionPlan(
+    @Body() requestBody: PaymentRequestBody,
+    @Res() res: Response,
+  ) {
+    try {
+      const session =
+        await this.paymentService.createCheckoutSessionPlan(requestBody);
       res.status(HttpStatus.OK).json({ url: session.url });
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ err: err.message });
