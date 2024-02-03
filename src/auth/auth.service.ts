@@ -64,7 +64,8 @@ export class AuthService {
     console.log(pwMatches);
     // if password incorrect throw exception
     if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
-    return this.signToken(user.id, user.email);
+    const token = await this.signToken(user.id, user.email);
+    return { ...token, user: user };
   }
 
   async signToken(
