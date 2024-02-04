@@ -34,6 +34,11 @@ export class AuthService {
           password: hash,
           address: dto.address,
           phone: dto.phone,
+          plan: {
+            connect: {
+              id: '65bec7b8740ece4ad2d9efe8',
+            },
+          },
         },
       });
 

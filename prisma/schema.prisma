@@ -21,7 +21,7 @@ model User {
   products       Product[]
   CommandProduct CommandProduct[]
   CommandPlan    CommandPlan[]
-  planId         String           @default("65bec5bc1f60a483ad1f95e1") @db.ObjectId
+  planId         String           @default("65bec7b8740ece4ad2d9efe8") @db.ObjectId
 }
 
 model Category {

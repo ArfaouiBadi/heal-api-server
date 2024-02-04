@@ -41,7 +41,7 @@ export class PaymentService {
         mode: 'payment',
         line_items,
         success_url: `${this.configService.get<string>('CLIENT')}afterpayment/product/success`,
-        cancel_url: `${this.configService.get<string>('CLIENT')}cart`,
+        cancel_url: `${this.configService.get<string>('CLIENT')}afterpayment/product/failed`,
       });
       if (!session) {
         throw new Error('Could not create session');
@@ -74,7 +74,7 @@ export class PaymentService {
         mode: 'payment',
         line_items,
         success_url: `${this.configService.get<string>('CLIENT')}afterpayment/plan/success`,
-        cancel_url: `${this.configService.get<string>('CLIENT')}cart`,
+        cancel_url: `${this.configService.get<string>('CLIENT')}afterpayment/plan/failed`,
       });
       if (!session) {
         throw new Error('Could not create session');
