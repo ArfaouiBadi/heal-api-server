@@ -8,20 +8,20 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  email               String    @unique
-  phone               String?
-  address             String?
-  password            String
-  role                String    @default("USER")
-  plan                String    @default("FREE")
-  autorizedProductNbr Int       @default(0)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  products            Product[]
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  email    String  @unique
+  phone    String?
+  address  String?
+  password String
+  role     String  @default("USER")
+  plan     Plan    @relation(fields: [planId], references: [id])
 
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  products       Product[]
   CommandProduct CommandProduct[]
   CommandPlan    CommandPlan[]
+  planId         String           @default("65bec5bc1f60a483ad1f95e1") @db.ObjectId
 }
 
 model Category {
@@ -76,8 +76,6 @@ model CommandProduct {
   user      User     @relation(fields: [userId], references: [id])
   productId String   @db.ObjectId
   product   Product  @relation(fields: [productId], references: [id])
-  planId    String   @db.ObjectId
-  plan      Plan     @relation(fields: [planId], references: [id])
 }
 
 model CommandPlan {
@@ -93,13 +91,15 @@ model CommandPlan {
 }
 
 model Plan {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  name           String           @unique
-  price          Float
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  CommandProduct CommandProduct[]
-  CommandPlan    CommandPlan[]
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                String   @unique
+  price               Float
+  autorizedProductNbr Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  CommandPlan CommandPlan[]
+  User        User[]
 }
 
 model Brand {

@@ -1,3 +1,4 @@
+import { PlanModule } from './plan/plan.module';
 import { CommandPlanModule } from './commandPlan/commandplan.module';
 import { PaymentModule } from './payment/payment.module';
 import { BrandModule } from './brand/brand.module';
@@ -8,10 +9,13 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
+import { CommandProductModule } from './commandProduct/commandProduct.module';
 
 @Module({
   imports: [
-        CommandPlanModule, 
+    PlanModule,
+    CommandPlanModule,
+    CommandProductModule,
     PaymentModule,
     BrandModule,
     SubCategoryModule,

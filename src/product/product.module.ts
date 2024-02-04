@@ -3,10 +3,11 @@ import { ProductService } from './product.service';
 import { ConfigService } from '@nestjs/config';
 import { ProductController } from './product.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [],
-  providers: [ProductService, ConfigService, PrismaService],
+  providers: [ProductService, ConfigService, PrismaService, UserService],
   controllers: [ProductController],
 })
 export class ProductModule {}

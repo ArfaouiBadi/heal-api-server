@@ -28,7 +28,7 @@ export class UserController {
 
   @Put('update/plan/:id')
   async updateUserPlan(@Body() req, @Param('id') id: string): Promise<User> {
-    return this.userService.updateUserPlan(id, req.plan);
+    return this.userService.updateUserPlan(id, req.planId);
   }
   @Put('update/role/:id')
   async updateRolePlan(@Body() req, @Param('id') id: string): Promise<User> {

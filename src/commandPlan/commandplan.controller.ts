@@ -2,7 +2,17 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CommandPlan } from '@prisma/client';
 
-@Controller()
-export class CommandPlanController {}
+import { CommandPlanService } from './commandplan.service';
+
+@Controller('commandplan')
+export class CommandPlanController {
+  constructor(private commandePlanService: CommandPlanService) {}
+  @Post()
+  async addCommandPlan(@Body() req: any): Promise<CommandPlan> {
+    console.log('req', req);
+    return await this.commandePlanService.addCommandPlan(req);
+  }
+}

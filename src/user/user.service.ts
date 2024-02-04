@@ -9,6 +9,14 @@ export class UserService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id: id },
+        include: {
+          plan: {
+            select: {
+              name: true,
+              autorizedProductNbr: true,
+            },
+          },
+        },
       });
 
       if (!user) {
@@ -73,7 +81,7 @@ export class UserService {
       throw new Error('Failed to update user role');
     }
   }
-  async updateUserPlan(id: string, plan: string) {
+  async updateUserPlan(id: string, planName: string) {
     const existingUser = await this.prisma.user.findUnique({
       where: { id: id },
     });
@@ -82,46 +90,21 @@ export class UserService {
       throw new Error('User not found for the given id');
     }
     try {
-      if (plan === 'BASIC') {
-        const user = await this.prisma.user.update({
-          where: { id: id },
-          data: {
-            plan: 'BASIC',
-            autorizedProductNbr: 10,
-          },
-        });
-        return user;
+      const plan = await this.prisma.plan.findUnique({
+        where: { name: planName },
+      });
+      if (!plan) {
+        throw new Error('Plan not found for the given id');
       }
-      if (plan === 'PREMIUM') {
-        const user = await this.prisma.user.update({
-          where: { id: id },
-          data: {
-            plan: 'PREMIUM',
-            autorizedProductNbr: 100,
+      const user = await this.prisma.user.update({
+        where: { id: id },
+        data: {
+          plan: {
+            connect: { id: plan.id },
           },
-        });
-        return user;
-      }
-      if (plan === 'PRO') {
-        const user = await this.prisma.user.update({
-          where: { id: id },
-          data: {
-            plan: 'PRO',
-            autorizedProductNbr: 50,
-          },
-        });
-        return user;
-      }
-      if (plan === 'FREE') {
-        const user = await this.prisma.user.update({
-          where: { id: id },
-          data: {
-            plan: 'FREE',
-            autorizedProductNbr: 0,
-          },
-        });
-        return user;
-      }
+        },
+      });
+      return user;
     } catch (error) {
       console.error('Error in updateUserPlan:', error.message);
       throw new Error('Failed to update user plan');

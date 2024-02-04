@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 /*
 interface CreateProductDto {
   productName: string;
@@ -31,7 +32,10 @@ interface UpdateProductDto {
 */
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
 
   async getProducts(): Promise<Product[]> {
     try {
@@ -83,8 +87,17 @@ export class ProductService {
   }
 
   async addProduct(req: any): Promise<Product> {
-    console.log(req);
     try {
+      const user = await this.userService.getUserById(req.userId);
+      const nbrProductedPerUser = await this.prisma.product.count({
+        where: {
+          userId: req.userId,
+        },
+      });
+
+      if (user.plan.autorizedProductNbr < nbrProductedPerUser + 1) {
+        throw new Error('You have reached the maximum number of products');
+      }
       const product = await this.prisma.product.create({
         data: {
           productName: req.productName,
@@ -183,6 +196,16 @@ export class ProductService {
         category: true,
         subcategory: true,
         user: true,
+      },
+    });
+  }
+  updateProductStock(productId: string, qty: number): Promise<Product> {
+    return this.prisma.product.update({
+      where: { id: productId },
+      data: {
+        quantity: {
+          decrement: qty,
+        },
       },
     });
   }

@@ -29,7 +29,7 @@ export class PaymentService {
               product_data: {
                 name: item.productName,
               },
-              unit_amount: item.price * 100,
+              unit_amount: Math.round(item.price * 100),
             },
             quantity: item.qty,
           };
@@ -53,11 +53,9 @@ export class PaymentService {
     }
   }
   async createCheckoutSessionPlan(products: any) {
-    console.log(products);
     try {
       const line_items = await Promise.all(
         products.map((item: any) => {
-          console.log(item);
           return {
             price_data: {
               currency: 'usd',
@@ -70,7 +68,6 @@ export class PaymentService {
           };
         }),
       );
-      console.log(line_items);
 
       const session = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -82,7 +79,7 @@ export class PaymentService {
       if (!session) {
         throw new Error('Could not create session');
       }
-      console.log(session);
+
       return session;
     } catch (err) {
       throw new Error(err.message);
