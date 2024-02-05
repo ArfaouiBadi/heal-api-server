@@ -4,9 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { ProductController } from './product.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [],
+  imports: [
+    MulterModule.register({
+      dest: './uploads',
+    }),
+  ],
   providers: [ProductService, ConfigService, PrismaService, UserService],
   controllers: [ProductController],
 })

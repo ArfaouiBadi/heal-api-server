@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from '@prisma/client';
+import * as fs from 'fs';
+
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 /*
@@ -8,12 +10,17 @@ interface CreateProductDto {
   marque: string;
   price: number;
   quantity: number;
+  category: { label: string; value: string };
   expirationDate: Date;
+  prescription: boolean;
   productCategory: string;
-  inventoryStatus: { value: string };
-  Image: string;
+  inventoryStatus: { label: string; value: string };
+  image: string;
   userId: string;
+  status: string;
+  usageInstructions: string;
 }
+
 
 interface UpdateProductDto {
   id: string;
@@ -28,8 +35,7 @@ interface UpdateProductDto {
   userId: string;
   prescription: boolean;
   usageInstructions: string;
-}
-*/
+}*/
 @Injectable()
 export class ProductService {
   constructor(
@@ -73,7 +79,6 @@ export class ProductService {
   }
 
   async getProductsByUser(userId: string): Promise<Product[]> {
-    console.log(userId);
     return this.prisma.product.findMany({
       include: {
         category: true,
@@ -86,7 +91,11 @@ export class ProductService {
     });
   }
 
-  async addProduct(req: any): Promise<Product> {
+  async addProduct(file: any, req: any): Promise<Product> {
+    console.log(req);
+    const imageBase64 = `data:${file.mimetype};base64, ${fs.readFileSync(file.path, 'base64')}`;
+    const expirationDate = new Date(req.expirationDate);
+    console.log(expirationDate);
     try {
       const user = await this.userService.getUserById(req.userId);
       const nbrProductedPerUser = await this.prisma.product.count({
@@ -102,18 +111,19 @@ export class ProductService {
         data: {
           productName: req.productName,
           marque: req.marque,
-          price: req.price,
-          quantity: req.quantity,
-          expirationDate: req.expirationDate,
+          price: parseFloat(req.price),
+          quantity: parseInt(req.quantity),
+          expirationDate: expirationDate,
+
           category: {
             connect: {
-              id: req.category?.value.split(' ')[0],
+              id: req.category.value.split(' ')[0],
             },
           },
           usageInstructions: req.usageInstructions,
-          prescription: req.prescription,
-          status: req.inventoryStatus?.value,
-          image: req.image,
+          prescription: req.prescription === 'true' ? true : false,
+          status: req.inventoryStatus.value,
+          image: imageBase64,
           reviews: 0,
           subcategory: {
             connect: {
@@ -134,8 +144,10 @@ export class ProductService {
     }
   }
 
-  async updateProduct(req: any): Promise<Product> {
+  async updateProduct(file: any, req: any): Promise<Product> {
     console.log(req);
+    const imageBase64 = `data:${file.mimetype};base64, ${fs.readFileSync(file.path, 'base64')}`;
+    const expirationDate = new Date(req.expirationDate);
     try {
       const updatedProduct = await this.prisma.product.update({
         where: {
@@ -144,18 +156,18 @@ export class ProductService {
         data: {
           productName: req.productName,
           marque: req.marque,
-          price: req.price,
-          quantity: req.quantity,
-          expirationDate: req.expirationDate,
+          price: parseFloat(req.price),
+          quantity: parseInt(req.quantity),
+          expirationDate: expirationDate,
           category: {
             connect: {
               id: req.categoryId,
             },
           },
           usageInstructions: req.usageInstructions,
-          prescription: req.prescription,
+          prescription: req.prescription === 'true' ? true : false,
           status: req.status,
-          image: req.image,
+          image: imageBase64,
           reviews: 0,
           subcategory: {
             connect: {
