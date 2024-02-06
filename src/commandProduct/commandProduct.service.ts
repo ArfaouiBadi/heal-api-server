@@ -59,7 +59,40 @@ export class CommandProductService {
       return createdCommandProducts;
     } catch (error) {
       console.error('Error adding command product:', error.message);
-      throw error; // Rethrow the error if needed
+      throw error;
+    }
+  }
+  async getAllCommandProduct(): Promise<any> {
+    try {
+      const commandProducts = await this.prisma.commandProduct.findMany();
+      return commandProducts;
+    } catch (error) {
+      console.error('Error getting command products:', error.message);
+      throw error;
+    }
+  }
+  async getCommandProductsByUserId(userId: string): Promise<any> {
+    try {
+      const commandProducts = await this.prisma.commandProduct.findMany({
+        where: { userId: userId },
+        include: { product: true },
+      });
+      return commandProducts;
+    } catch (error) {
+      console.error('Error getting command products:', error.message);
+      throw error;
+    }
+  }
+  async getProductsByProductUserID(userId: string): Promise<any> {
+    try {
+      const products = await this.prisma.commandProduct.findMany({
+        where: { product: { userId: userId } },
+        include: { product: true },
+      });
+      return products;
+    } catch (error) {
+      console.error('Error getting products:', error.message);
+      throw error;
     }
   }
 }
