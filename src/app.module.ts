@@ -1,3 +1,4 @@
+import { OcrModule } from './ocr/ocr.module';
 import { PlanModule } from './plan/plan.module';
 import { CommandPlanModule } from './commandPlan/commandplan.module';
 import { PaymentModule } from './payment/payment.module';
@@ -13,6 +14,7 @@ import { CommandProductModule } from './commandProduct/commandProduct.module';
 
 @Module({
   imports: [
+    OcrModule,
     PlanModule,
     CommandPlanModule,
     CommandProductModule,
