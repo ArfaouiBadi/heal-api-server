@@ -64,7 +64,14 @@ export class CommandProductService {
   }
   async getAllCommandProduct(): Promise<any> {
     try {
-      const commandProducts = await this.prisma.commandProduct.findMany();
+      const commandProducts = await this.prisma.commandProduct.findMany({
+        include: {
+          product: {
+            include: { user: true },
+          },
+          user: true,
+        },
+      });
       return commandProducts;
     } catch (error) {
       console.error('Error getting command products:', error.message);
@@ -92,6 +99,29 @@ export class CommandProductService {
       return products;
     } catch (error) {
       console.error('Error getting products:', error.message);
+      throw error;
+    }
+  }
+  async deleteCommandProduct(id: string): Promise<any> {
+    try {
+      const deletedCommandProduct = await this.prisma.commandProduct.delete({
+        where: { id },
+      });
+      return deletedCommandProduct;
+    } catch (error) {
+      console.error('Error deleting command product:', error.message);
+      throw error;
+    }
+  }
+  async deleteCommandProductsByUserEmail(userEmail: string): Promise<any> {
+    try {
+      const deletedCommandProducts =
+        await this.prisma.commandProduct.deleteMany({
+          where: { product: { user: { email: userEmail } } },
+        });
+      return deletedCommandProducts;
+    } catch (error) {
+      console.error('Error deleting command products:', error.message);
       throw error;
     }
   }

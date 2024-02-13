@@ -221,4 +221,19 @@ export class ProductService {
       },
     });
   }
+  getProductsBySubCategory(subcategoryId: string): Promise<Product[]> {
+    console.log(subcategoryId);
+    return this.prisma.product.findMany({
+      where: {
+        subcategory: {
+          id: subcategoryId,
+        },
+      },
+      include: {
+        category: true,
+        subcategory: true,
+        user: true,
+      },
+    });
+  }
 }

@@ -2,7 +2,7 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CommandProduct } from '@prisma/client';
 import { CommandProductService } from './commandProduct.service';
 
@@ -29,5 +29,17 @@ export class CommandProductController {
     @Param('id') userId: string,
   ): Promise<CommandProduct[]> {
     return await this.commandeProductService.getProductsByProductUserID(userId);
+  }
+  @Delete('delete/:id')
+  async deleteCommandProduct(@Param('id') id: string): Promise<CommandProduct> {
+    return await this.commandeProductService.deleteCommandProduct(id);
+  }
+  @Delete('deleteAll/:id')
+  async deleteAllCommandProduct(
+    @Param('id') id: string,
+  ): Promise<CommandProduct> {
+    return await this.commandeProductService.deleteCommandProductsByUserEmail(
+      id,
+    );
   }
 }

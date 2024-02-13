@@ -16,7 +16,6 @@ export class OcrController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
     return this.ocrService.parseImage(file.buffer);
   }
 }

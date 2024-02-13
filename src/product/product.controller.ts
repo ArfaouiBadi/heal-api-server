@@ -83,4 +83,10 @@ export class ProductController {
       throw new Error('Error deleting product');
     }
   }
+  @Get('subcategory/:subcategory') // Update the parameter name here
+  async getProductsBySubCategory(
+    @Param('subcategory') subcategory: string, // Keep the parameter name consistent
+  ): Promise<Product[]> {
+    return await this.productService.getProductsBySubCategory(subcategory);
+  }
 }
