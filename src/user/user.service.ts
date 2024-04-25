@@ -30,15 +30,16 @@ export class UserService {
     }
   }
   async updateUser(id: string, data: any) {
+    console.log(id);
+    console.log(data.plan.id);
     try {
-      console.log(id, data);
-
       const user = await this.prisma.user.update({
         where: { id: id },
         data: {
-          email: data.email,
-          phone: data.phone,
-          address: data.address,
+          role: data.role.value || data.role,
+          plan: {
+            connect: { id: data.plan.id || data.plan },
+          },
         },
       });
       return user;
@@ -60,7 +61,18 @@ export class UserService {
   }
   async getUsers() {
     try {
-      const users = await this.prisma.user.findMany();
+      const users = await this.prisma.user.findMany({
+        include: {
+          plan: {
+            select: {
+              id: true,
+              name: true,
+              autorizedProductNbr: true,
+              updatedAt: true,
+            },
+          },
+        },
+      });
       return users;
     } catch (error) {
       console.error('Error in getUsers:', error.message);
@@ -108,27 +120,6 @@ export class UserService {
     } catch (error) {
       console.error('Error in updateUserPlan:', error.message);
       throw new Error('Failed to update user plan');
-    }
-  }
-  async updateRolePlan(id: string, role: string) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id: id },
-    });
-
-    if (!existingUser) {
-      throw new Error('User not found for the given id');
-    }
-    try {
-      const user = await this.prisma.user.update({
-        where: { id: id },
-        data: {
-          role: role,
-        },
-      });
-      return user;
-    } catch (error) {
-      console.error('Error in updateRolePlan:', error.message);
-      throw new Error('Failed to update user role');
     }
   }
 }

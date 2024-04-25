@@ -18,14 +18,12 @@ export class PaymentService {
   }
 
   async createCheckoutSessionProduct(products: any) {
-    console.log(products);
     try {
       const line_items = await Promise.all(
         products.map((item: Product) => {
-          console.log(item);
           return {
             price_data: {
-              currency: 'usd',
+              currency: 'EUR',
               product_data: {
                 name: item.productName,
               },

@@ -13,6 +13,7 @@ export class SubCategoryController {
   async getSubCategory(): Promise<Subcategory[]> {
     return await this.subCategoryService.getSubCategory();
   }
+
   @Post()
   async addSubCategory(@Body() req): Promise<Subcategory> {
     return await this.subCategoryService.addSubCategory(req);

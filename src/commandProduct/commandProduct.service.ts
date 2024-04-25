@@ -9,11 +9,9 @@ export class CommandProductService {
   ) {}
 
   async addCommandProduct(req: any): Promise<any> {
-    console.log('req', req);
-
     try {
       const createdCommandProducts = await Promise.all(
-        req.products.map(async (product) => {
+        req.products.map(async (product: any) => {
           const productExist = await this.prisma.product.findUnique({
             where: { id: product.id },
           });
@@ -24,7 +22,7 @@ export class CommandProductService {
 
           if (productExist.quantity < product.qty) {
             throw new Error(
-              `Product with id '${product.id}' has not enough stock. Stock: ${productExist.quantity}`,
+              `Product with id '${product.productName}' has not enough stock. Stock: ${productExist.quantity}`,
             );
           }
 

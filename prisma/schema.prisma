@@ -15,7 +15,6 @@ model User {
   password String
   role     String  @default("USER")
   plan     Plan    @relation(fields: [planId], references: [id])
-
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   products       Product[]

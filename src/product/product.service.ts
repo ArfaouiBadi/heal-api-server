@@ -145,8 +145,11 @@ export class ProductService {
   }
 
   async updateProduct(file: any, req: any): Promise<Product> {
-    console.log(req);
-    const imageBase64 = `data:${file.mimetype};base64, ${fs.readFileSync(file.path, 'base64')}`;
+    if (file !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const imageBase64 = `data:${file.mimetype};base64, ${fs.readFileSync(file.path, 'base64')}`;
+    }
+    const imageBase64 = req.image;
     const expirationDate = new Date(req.expirationDate);
     try {
       const updatedProduct = await this.prisma.product.update({

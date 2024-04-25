@@ -6,7 +6,6 @@ import { PaymentRequestBody } from 'src/types/types';
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
-
   @Post('/check/product')
   async createCheckoutSessionProduct(
     @Body() requestBody: PaymentRequestBody,
