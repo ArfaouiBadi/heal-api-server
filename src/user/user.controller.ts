@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('User')
 export class UserController {
@@ -25,7 +16,6 @@ export class UserController {
     console.log(req);
     return this.userService.updateUser(id, req);
   }
-  @UseGuards(AuthGuard('jwt'))
   @Get('')
   async getUsers(): Promise<User[]> {
     return this.userService.getUsers();

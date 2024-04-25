@@ -7,14 +7,12 @@ import {
   Post,
   Put,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from '@prisma/client';
 import * as multer from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '@nestjs/passport';
 
 const storage = multer.memoryStorage();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,17 +32,14 @@ const upload = multer({ storage: storage });
 @Controller('products')
 export class ProductController {
   constructor(private productService: ProductService) {}
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getProductsByUser(@Param('id') id: string): Promise<Product[]> {
     return await this.productService.getProductsByUser(id);
   }
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAllProducts(): Promise<Product[]> {
     return await this.productService.getAllProducts();
   }
-  @UseGuards(AuthGuard('jwt'))
   @Post('addProduct')
   @UseInterceptors(FileInterceptor('file'))
   async addProduct(
@@ -75,7 +70,6 @@ export class ProductController {
       throw new Error('Error updating product');
     }
   }
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteProduct(@Param('id') id: string): Promise<Product> {
     console.log(id);
