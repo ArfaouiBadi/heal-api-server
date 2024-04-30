@@ -7,12 +7,14 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from '@prisma/client';
 import * as multer from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AccesGuard } from 'src/acces/acces.guard';
 
 const storage = multer.memoryStorage();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,6 +38,7 @@ export class ProductController {
   async getProductsByUser(@Param('id') id: string): Promise<Product[]> {
     return await this.productService.getProductsByUser(id);
   }
+
   @Get()
   async getAllProducts(): Promise<Product[]> {
     return await this.productService.getAllProducts();

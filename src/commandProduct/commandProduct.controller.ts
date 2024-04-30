@@ -2,9 +2,18 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandProduct } from '@prisma/client';
 import { CommandProductService } from './commandProduct.service';
+import { AccesGuard } from 'src/acces/acces.guard';
 
 @Controller('commandproduct')
 export class CommandProductController {
@@ -14,6 +23,7 @@ export class CommandProductController {
     return await this.commandeProductService.addCommandProduct(req);
   }
   @Get('all')
+  @UseGuards(AccesGuard)
   async getAllCommandProduct(): Promise<CommandProduct[]> {
     return await this.commandeProductService.getAllCommandProduct();
   }

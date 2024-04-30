@@ -14,7 +14,6 @@ export class OcrService {
       const text = await tesseract.recognize(imageBuffer, 'eng', {
         logger: (m) => console.log(m),
       });
-
       return text.data.text;
     } catch (error) {
       throw new Error(error.message);

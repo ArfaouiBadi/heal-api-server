@@ -16,6 +16,17 @@ export class OcrController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new Error('File is required');
+    }
+    console.log(file.mimetype);
+    if (
+      file.mimetype !== 'image/png' &&
+      file.mimetype !== 'image/jpeg' &&
+      file.mimetype !== 'image/jpg'
+    ) {
+      throw new Error('Invalid file type');
+    }
     return this.ocrService.parseImage(file.buffer);
   }
 }

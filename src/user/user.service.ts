@@ -29,17 +29,22 @@ export class UserService {
       throw new Error('Failed to get user by ID');
     }
   }
-  async updateUser(id: string, data: any) {
-    console.log(id);
-    console.log(data.plan.id);
+  async updateUserRoleandPlan(id: string, data: any) {
+    console.log(data);
+
+    console.log(data.plan.id + ' ' + data.planId + ' ' + data.plan);
     try {
       const user = await this.prisma.user.update({
         where: { id: id },
         data: {
           role: data.role.value || data.role,
           plan: {
-            connect: { id: data.plan.id || data.plan },
+            connect: { id: data.plan.id || data.plan || data.planId },
           },
+          phone: data.phone,
+          email: data.email,
+          password: data.password,
+          address: data.address,
         },
       });
       return user;
@@ -48,6 +53,25 @@ export class UserService {
       throw new Error('Failed to update user');
     }
   }
+  async updateUser(id: string, data: any) {
+    try {
+      const user = await this.prisma.user.update({
+        where: { id: id },
+        data: {
+          role: data.role,
+          phone: data.phone,
+          email: data.email,
+          password: data.password,
+          address: data.address,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error in updateUser:', error.message);
+      throw new Error('Failed to update user');
+    }
+  }
+
   async deleteUser(id: string) {
     try {
       const user = await this.prisma.user.delete({
